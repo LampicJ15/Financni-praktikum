@@ -1,5 +1,6 @@
 library(combinat)
 library(Rlab)
+library(dplyr)
 #========================
 #1.) 
 #a.)
@@ -34,31 +35,40 @@ izplacilo <- function(vrsta, t, type){
 
 binomski <- function(S0,u,d,U,R,t,type){
   p <- (1+R-d)/(u-d)
-  E <- 0 #upanje
+  drevo <- hcube(rep(2,U), translation = -1) #drevo stanj 1 pomeni up 0 down
   
-  drevo <- hcube(rep(2,U), translation = -1)
-  for(i in c(1:nrow(drevo))){
-    vrsta <- c(S0)
-    P <- p^(sum(drevo[i,]))*(1-p)^(U - sum(drevo[i,]))
-    for (j in c(1:U)){
-      vrsta[j+1] <- vrsta[j]* (u*drevo[i,j] + (1-drevo[i,j])*d)
-    }
   
-    E <- E + P*izplacilo(vrsta,t,type)
-    
-  }
-    return(E/(1+R)^U)
+  #izračun verjetnosti končnih stanj
+  k <- rowSums(drevo) #vektor, ki za vsako vrstico pove kolikorat je up
+  P.S <- p^k*(1-p)^(U-k) #vektor verjetnosti končnih stanj
+  
+  drevo[drevo == 1]<- u #1 v matriki zamenjamo z u
+  drevo[drevo == 0]<- d #0 v matriki zamenjamo z vrednostjo d
+  
+  drevo <- t( apply(drevo,1, cumprod)) #kumulativni produkt u in d po vrsticah 
+  vrednosti <- cbind(S0, S0*drevo) #dobimo matriko, ki ima za vrstice vrednosti oz. vrsto za S0
+  
+  izplacila <- apply(vrednosti,1, function(x) izplacilo(x,t,type)) #po vrsticah matrikah izvedemo funkcijo izplacila
+  E <- sum( izplacila * P.S) #upanje (skalarni produkt)
+  
+  return(E/(1+R)^U)
 }
 
 #b.)
-monte <- function(S0,u,d,U,R,T,type,N){
+#definiram funkcijo, ki iz zaporedja u in d (up in down), vrne vrsto vrednosti s. 
+
+
+monte <- function(S0,u,d,U,R,t,type,N){
   p <- (1+R-d)/(u-d)
-  drevo <- matrix(rbinom(U*N,1,p),N,U) #stanja
+  drevo <- matrix(rbinom(U*N,1,p),N,U) #stanja 
+  drevo[drevo == 1]<- u #1 v matriki zamenjamo z u
+  drevo[drevo == 0]<- d #0 v matriki zamenjamo z vrednostjo d
   
+  drevo <- t( apply(drevo,1, cumprod)) #kumulativni produkt u in d po vrsticah 
+  vrednosti <- cbind(S0, S0*drevo) #dobimo matriko, ki ima za vrstice vrednosti oz. vrsto za S0
+  izplacila <- apply(vrednosti,1, function(x) izplacilo(x,t,type)) #po vrsticah matrikah izvedemo funkcijo izplacila
   
+  premija <- ( sum(izplacila)/N )/(1+R)^U #sum(izplacila)/N je vzorčno povprečje
   
-  
-  
-  
-  
+  return(premija)
 }
