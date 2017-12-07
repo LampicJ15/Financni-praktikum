@@ -11,8 +11,8 @@ U <- 5
 R <- 0.03
 t <- 3
 
-X <- c() #vektor izplačil nakupne opcije
-Y <- c() #vektor izplačil prodajne opcije
+X <- c(0, 8.69, 0, 2.24, 5.24) #vektor izplačil nakupne opcije
+Y <- c(0, 7.88, 0, 0, 0) #vektor izplačil prodajne opcije
 
 #b.)
 
