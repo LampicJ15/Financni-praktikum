@@ -80,11 +80,18 @@ glajena.ts14 <-G(t.series1,14)
 napoved(t.series1,14)
 SKN(t.series1,glajena.ts14,14)
 
-graf.zlato14 <- ts.plot(t.series1,glajena.ts14,
-                       main ="Drseče povprečje k=14",
+#red glajenja k=30
+glajena.ts30 <-G(t.series1,30)
+napoved(t.series1,30)
+SKN(t.series1,glajena.ts30,30)
+
+par(mfrow(c(2,2)))
+
+graf.zlato2 <- ts.plot(t.series1,glajena.ts7,
+                       main ="Drseče povprečje k=7",
                        xlab='Leto',
                        ylab ='Vrednost v evrih', 
- 
+                       
                        col =c("cornflowerblue","red"),
                        lwd = 3)
 
@@ -94,10 +101,20 @@ legend('bottomright',
        lwd = 1:1,
        bty = 'n')
 
-#red glajenja k=30
-glajena.ts30 <-G(t.series1,30)
-napoved(t.series1,30)
-SKN(t.series1,glajena.ts30,30)
+
+graf.zlato14 <- ts.plot(t.series1,glajena.ts14,
+                        main ="Drseče povprečje k=14",
+                        xlab='Leto',
+                        ylab ='Vrednost v evrih', 
+                        
+                        col =c("cornflowerblue","red"),
+                        lwd = 3)
+
+legend('bottomright', 
+       legend = c('vrsta', 'glajena vrsta'),
+       col =c("cornflowerblue","red"),
+       lwd = 1:1,
+       bty = 'n')
 
 graf.zlato30 <- ts.plot(t.series1,glajena.ts30,
                         main ="Drseče povprečje k=30",
